@@ -1,0 +1,37 @@
+networks:
+  stream-net:
+    external: true
+
+services:
+  backend:
+    image: ${DOCKER_USER}/fastreport-backend:latest
+    container_name: fastreport_backend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./storage:/app/storage
+      - ./reports:/app/wwwroot/reports
+      - ./history:/app/wwwroot/history
+      - ./recovery:/app/wwwroot/recovery
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Orchestrator__DockerNetwork=stream-net
+      - Orchestrator__Url=http://fastreport_backend:3000
+      - Orchestrator__DockerImage=${DOCKER_USER}/fastreport-stream:${STREAM_TAG:-box64}
+      - Orchestrator__DockerPlatform=${STREAM_PLATFORM:-}
+      - Jwt__SecretKey=${JWT_SECRET:-SuperSecretKeyForFastReportWebEditorStreamPoc2026!MustBeAtLeast32BytesLong}
+    networks:
+      - stream-net
+
+  nginx:
+    image: ${DOCKER_USER}/fastreport-gateway:latest
+    container_name: fastreport_nginx_gateway
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    networks:
+      - stream-net
+    depends_on:
+      - backend

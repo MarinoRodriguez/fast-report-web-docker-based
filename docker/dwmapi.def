@@ -1,0 +1,7 @@
+LIBRARY dwmapi.dll
+EXPORTS
+    DwmIsCompositionEnabled
+    DwmExtendFrameIntoClientArea
+    DwmSetWindowAttribute
+    DwmGetWindowAttribute
+    DwmDefWindowProc

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "hist_mur2gvhi_yrrd",
+    "reportName": "EmployeeList",
+    "originalFilename": "EmployeeList.frx",
+    "version": 5,
+    "versionLabel": "v5",
+    "filename": "hist_1790951813477_EmployeeList_v5.frx",
+    "userToken": "demo-user-123",
+    "comment": "Guardado por demo-user-123",
+    "timestamp": 1790951813478,
+    "date": "2/10/2026, 10:36:53 a. m.",
+    "sizeKb": "5.6"
+  },
+  {
+    "id": "hist_mur2dm96_8wkm",
+    "reportName": "EmployeeList",
+    "originalFilename": "EmployeeList.frx",
+    "version": 4,
+    "versionLabel": "v4",
+    "filename": "hist_1790951661545_EmployeeList_v4.frx",
+    "userToken": "demo-user-124",
+    "comment": "Guardado por demo-user-124",
+    "timestamp": 1790951661546,
+    "date": "2/10/2026, 10:34:21 a. m.",
+    "sizeKb": "5.6"
+  },
+  {
+    "id": "hist_mur26rth_npom",
+    "reportName": "EmployeeList",
+    "originalFilename": "EmployeeList.frx",
+    "version": 3,
+    "versionLabel": "v3",
+    "filename": "hist_1790951342164_EmployeeList_v3.frx",
+    "userToken": "user-A",
+    "comment": "Restaurado a partir de v1 por user-A",
+    "timestamp": 1790951342165,
+    "date": "2/10/2026, 10:29:02 a. m.",
+    "sizeKb": "5.6"
+  },
+  {
+    "id": "hist_mur264vf_og5m",
+    "reportName": "EmployeeList",
+    "originalFilename": "EmployeeList.frx",
+    "version": 2,
+    "versionLabel": "v2",
+    "filename": "hist_1790951312426_EmployeeList_v2.frx",
+    "userToken": "user-B",
+    "comment": "Añadido nuevo banner corporativo (v2 por user-B)",
+    "timestamp": 1790951312427,
+    "date": "2/10/2026, 10:28:32 a. m.",
+    "sizeKb": "5.6"
+  },
+  {
+    "id": "hist_mur25z2t_5t4v",
+    "reportName": "EmployeeList",
+    "originalFilename": "EmployeeList.frx",
+    "version": 1,
+    "versionLabel": "v1",
+    "filename": "hist_1790951304916_EmployeeList_v1.frx",
+    "userToken": "user-A",
+    "comment": "Añadido cálculo de comisiones (v1 por user-A)",
+    "timestamp": 1790951304917,
+    "date": "2/10/2026, 10:28:24 a. m.",
+    "sizeKb": "5.6"
+  }
+]

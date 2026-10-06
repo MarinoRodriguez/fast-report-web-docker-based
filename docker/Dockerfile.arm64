@@ -1,0 +1,135 @@
+# ==============================================================================
+# FastReport Docker Stream - Ephemeral Container Dockerfile (ARM64 with Box64 + Wine)
+# ==============================================================================
+# Linux Debian Slim ARM64 container with Box64 dynamic recompiler,
+# Kron4ek Wine 9.0 (amd64 wow64), Xvfb headless display, Openbox, x11vnc, websockify.
+# Wine browser calls are redirected to our SSE bridge instead of running a local browser.
+# ==============================================================================
+
+FROM debian:bookworm-slim
+
+LABEL maintainer="Antigravity Cloud Architecture"
+LABEL description="Headless FastReport Windows Designer stream on ARM64 using Box64 and Wine WOW64"
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    WINEARCH=win64 \
+    WINEDEBUG=-all \
+    DISPLAY=:99 \
+    RESOLUTION=1280x720x24 \
+    BROWSER=/usr/local/bin/winebrowser \
+    WORKSPACE_DIR=/workspace \
+    BRIDGE_PORT=8080 \
+    WS_PORT=6080 \
+    VNC_PORT=5900 \
+    BOX64_NOBANNER=1 \
+    BOX64_DYNAREC=1 \
+    BOX64_LOG=0
+
+# 1. Install base utilities, X11, Openbox, VNC, Websockify and GUI dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        ca-certificates \
+        gnupg \
+        wget \
+        xz-utils \
+        xvfb \
+        x11-utils \
+        xdotool \
+        openbox \
+        x11vnc \
+        websockify \
+        novnc \
+        python3 \
+        procps \
+        net-tools \
+        fontconfig \
+        zenity \
+        fonts-dejavu-core \
+        fonts-liberation \
+        fonts-freefont-ttf \
+        libx11-6 \
+        libxext6 \
+        libxrender1 \
+        libxinerama1 \
+        libxi6 \
+        libxrandr2 \
+        libxcursor1 \
+        libxfixes3 \
+        libxcomposite1 \
+        libgl1 \
+        libglu1-mesa \
+        libfreetype6 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. Add Box64 repository and install Box64
+RUN mkdir -p /etc/apt/trusted.gpg.d /etc/apt/sources.list.d && \
+    wget -qO /etc/apt/sources.list.d/box64.list https://ryanfortner.github.io/box64-debs/box64.list && \
+    wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/box64.gpg && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends box64 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 3. Install Portable Wine 9.0 (x86_64 with new WOW64 support) & Wine-Mono 9.2.0
+RUN mkdir -p /opt/wine && \
+    curl -fsSL https://github.com/Kron4ek/Wine-Builds/releases/download/9.0/wine-9.0-amd64-wow64.tar.xz | tar -xJ -C /opt/wine --strip-components=1 && \
+    mkdir -p /opt/wine/share/wine/mono /root/.cache/wine && \
+    curl -sSL -o /opt/wine/share/wine/mono/wine-mono-9.2.0-x86.msi \
+        https://dl.winehq.org/wine/wine-mono/9.2.0/wine-mono-9.2.0-x86.msi && \
+    cp /opt/wine/share/wine/mono/wine-mono-9.2.0-x86.msi /root/.cache/wine/
+
+# Create wrapper scripts in /usr/local/bin to guarantee execution via Box64
+RUN for bin in wine wine64 wineserver wineboot msiexec reg; do \
+        printf '#!/bin/sh\nexec box64 /opt/wine/bin/%s "$@"\n' "$bin" > /usr/local/bin/"$bin" && \
+        chmod +x /usr/local/bin/"$bin"; \
+    done
+
+WORKDIR /app
+
+# 4. Install URL Redirector (Intercepts Wine browser calls)
+COPY url-redirector.sh /usr/local/bin/winebrowser
+RUN chmod +x /usr/local/bin/winebrowser && \
+    ln -sf /usr/local/bin/winebrowser /usr/bin/winebrowser && \
+    ln -sf /usr/local/bin/winebrowser /usr/bin/xdg-open && \
+    ln -sf /usr/local/bin/winebrowser /usr/bin/sensible-browser && \
+    ln -sf /usr/local/bin/winebrowser /usr/bin/x-www-browser
+
+# 5. Copy templates, openbox config, and entrypoint
+COPY default_report.frx /app/default_report.frx
+COPY test_doc.rtf /app/test_doc.rtf
+COPY openbox_rc.xml /etc/xdg/openbox/rc.xml
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# 6. Copy FastReport Windows Designer binaries
+COPY FastReport-WindowsDesigner/ /app/FastReport-WindowsDesigner/
+
+# 7. Initialize Wine prefix and install Windows Core Fonts for System.Drawing GDI+
+RUN wineboot --init && wineserver -w
+
+# Copy Windows fonts into system and Wine prefix, then rebuild font cache
+COPY fonts/ /root/.wine/drive_c/windows/Fonts/
+COPY fonts/ /usr/share/fonts/truetype/msttcorefonts/
+RUN fc-cache -fv
+
+# 8. Compile DotNetBar-compatible dwmapi stubs (0-param DwmIsCompositionEnabled) to avoid stack corruption
+COPY dwmapi_fix.c dwmapi.def /tmp/
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 && \
+    x86_64-w64-mingw32-gcc -shared -s -O2 -o /root/.wine/drive_c/windows/system32/dwmapi.dll /tmp/dwmapi_fix.c /tmp/dwmapi.def && \
+    i686-w64-mingw32-gcc -shared -s -O2 -o /root/.wine/drive_c/windows/syswow64/dwmapi.dll /tmp/dwmapi_fix.c /tmp/dwmapi.def && \
+    apt-get purge -y gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/dwmapi*
+
+ENV WINEDLLOVERRIDES="dwmapi=n"
+
+# 9. Create workspace mount point
+RUN mkdir -p /workspace
+
+EXPOSE 6080 8080
+
+ENTRYPOINT ["/app/entrypoint.sh"]

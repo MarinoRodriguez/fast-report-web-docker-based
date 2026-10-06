@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/29/2026 12:00:00" ReportInfo.Modified="09/29/2026 12:00:00" ReportInfo.CreatorVersion="2023.1.0.0">
+  <Dictionary/>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="75.6">
+      <TextObject Name="TitleText" Left="18.9" Top="15.12" Width="680.4" Height="45.36" Text="FastReport Cloud Stream - Reporte de Demostración" HorzAlign="Center" VertAlign="Center" Font="Arial, 16pt, style=Bold"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="79.6" Width="718.2" Height="28.35">
+      <TextObject Name="HeaderCol1" Left="18.9" Top="5.67" Width="189" Height="18.9" Text="ID Producto / Ítem" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="HeaderCol2" Left="226.8" Top="5.67" Width="264.6" Height="18.9" Text="Descripción del Concepto" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="HeaderCol3" Left="510.3" Top="5.67" Width="189" Height="18.9" Text="Monto Total (USD)" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+      <LineObject Name="HeaderLine" Left="18.9" Top="26.46" Width="680.4"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="111.95" Width="718.2" Height="66.15">
+      <TextObject Name="Item1Id" Left="18.9" Top="9.45" Width="189" Height="18.9" Text="PRD-001" Font="Arial, 9.5pt"/>
+      <TextObject Name="Item1Desc" Left="226.8" Top="9.45" Width="264.6" Height="18.9" Text="Servicio Cloud Streaming Wine/Docker" Font="Arial, 9.5pt"/>
+      <TextObject Name="Item1Price" Left="510.3" Top="9.45" Width="189" Height="18.9" Text="$ 1,250.00" HorzAlign="Right" Font="Arial, 9.5pt"/>
+      
+      <TextObject Name="Item2Id" Left="18.9" Top="37.8" Width="189" Height="18.9" Text="PRD-002" Font="Arial, 9.5pt"/>
+      <TextObject Name="Item2Desc" Left="226.8" Top="37.8" Width="264.6" Height="18.9" Text="Módulo Interceptor URL &amp; SSE Realtime" Font="Arial, 9.5pt"/>
+      <TextObject Name="Item2Price" Left="510.3" Top="37.8" Width="189" Height="18.9" Text="$ 850.00" HorzAlign="Right" Font="Arial, 9.5pt"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="182.1" Width="718.2" Height="37.8">
+      <LineObject Name="FooterLine" Left="18.9" Top="5.67" Width="680.4"/>
+      <TextObject Name="FooterText" Left="18.9" Top="11.34" Width="400" Height="18.9" Text="FastReport Docker-Based Streaming PoC - Guarde cambios con Ctrl+S" Font="Arial, 8.5pt, style=Italic"/>
+      <TextObject Name="PageNum" Left="510.3" Top="11.34" Width="189" Height="18.9" Text="[Page#] de [TotalPages#]" HorzAlign="Right" Font="Arial, 8.5pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

@@ -1,0 +1,43 @@
+/* FastReport Web Editor - Clean Bootstrap Enhancements */
+
+:root {
+  --header-height: 52px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+}
+
+/* Streaming Container View */
+.stream-view {
+  height: calc(100vh - var(--header-height));
+  z-index: 100;
+}
+
+.vnc-container {
+  width: 100%;
+  height: 100%;
+  background-color: #0b0f19;
+}
+
+.vnc-container canvas {
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
+  display: block;
+}
+
+/* Stream Loading Overlay */
+.stream-loading {
+  backdrop-filter: blur(4px);
+}
+
+/* Reports Table Hover */
+.table-hover tbody tr {
+  transition: background-color 0.15s ease-in-out;
+}
+
+/* Modals */
+.modal-content {
+  background-color: #1e293b;
+  color: #f8fafc;
+}

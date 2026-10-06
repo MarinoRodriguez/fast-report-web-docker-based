@@ -1,0 +1,42 @@
+networks:
+  stream-net:
+    external: true
+
+services:
+  backend:
+    build:
+      context: ./backend-dotnet
+      dockerfile: Dockerfile
+    image: fastreport-backend:latest
+    container_name: fastreport_backend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend-dotnet/storage:/app/storage
+      - ./backend-dotnet/wwwroot:/app/wwwroot
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Orchestrator__DockerNetwork=stream-net
+      - Orchestrator__Url=http://fastreport_backend:3000
+    networks:
+      - stream-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    image: fastreport-gateway:latest
+    container_name: fastreport_nginx_gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - stream-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backend
